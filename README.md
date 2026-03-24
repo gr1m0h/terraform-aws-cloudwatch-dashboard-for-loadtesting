@@ -52,8 +52,8 @@ module "load_test_dashboard" {
 
 | Name      | Version |
 | --------- | ------- |
-| terraform | >= 1.3  |
-| aws       | >= 4.0  |
+| terraform | >= 1.13.0 |
+| aws       | >= 6.17.0 |
 
 ## Resources
 
