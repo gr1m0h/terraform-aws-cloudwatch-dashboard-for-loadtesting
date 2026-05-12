@@ -7,7 +7,7 @@ locals {
   # ============================================================
   # CloudFront widgets (us-east-1 only)
   # ============================================================
-  cloudfront_widgets = local.include_cloudfront ? [
+  cloudfront_widgets_def = [
     {
       type   = "text"
       x      = 0
@@ -108,7 +108,8 @@ locals {
         ]
       }
     }
-  ] : []
+  ]
+  cloudfront_widgets = [for w in local.cloudfront_widgets_def : w if local.include_cloudfront]
 
   # Section heights for y-offset calculation
   cf_height  = local.include_cloudfront ? 13 : 0
@@ -117,7 +118,7 @@ locals {
   # ============================================================
   # ALB widgets (optional)
   # ============================================================
-  alb_widgets = local.include_alb ? [
+  alb_widgets_def = [
     {
       type   = "text"
       x      = 0
@@ -220,7 +221,8 @@ locals {
         ]
       }
     }
-  ] : []
+  ]
+  alb_widgets = [for w in local.alb_widgets_def : w if local.include_alb]
 
   alb_height = local.include_alb ? 13 : 0
   ecs_offset = local.alb_offset + local.alb_height
@@ -304,7 +306,7 @@ locals {
   # ============================================================
   # RDS widgets (optional)
   # ============================================================
-  rds_widgets = local.include_rds ? [
+  rds_widgets_def = [
     {
       type   = "text"
       x      = 0
@@ -388,7 +390,8 @@ locals {
         ]
       }
     }
-  ] : []
+  ]
+  rds_widgets = [for w in local.rds_widgets_def : w if local.include_rds]
 
   all_widgets = concat(
     local.cloudfront_widgets,
