@@ -404,4 +404,11 @@ locals {
 resource "aws_cloudwatch_dashboard" "this" {
   dashboard_name = var.name
   dashboard_body = jsonencode({ widgets = local.all_widgets })
+
+  lifecycle {
+    precondition {
+      condition     = !local.include_alb || var.target_group_arn_suffix != ""
+      error_message = "target_group_arn_suffix is required when alb_arn_suffix is set (the Healthy Host Count widget needs both)."
+    }
+  }
 }

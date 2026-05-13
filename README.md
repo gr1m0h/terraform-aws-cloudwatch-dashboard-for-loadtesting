@@ -48,6 +48,15 @@ module "load_test_dashboard" {
 | ECS        | CPU Utilization (Avg/Max), Memory Utilization (Avg/Max), Task Count (Running/Desired)                 |
 | RDS        | CPU Utilization, Database Connections, Read/Write Latency, Freeable Memory                            |
 
+### Source Feature Requirements
+
+Some widgets depend on features that must be enabled on the underlying AWS resource. Without them the widgets render as "No data":
+
+| Widget                                              | Required source feature                                                                                                                                       |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CloudFront `Cache Hit Rate`, `Origin Latency`       | [Additional CloudWatch metrics](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/viewing-cloudfront-metrics.html#monitoring-console.additional) on the distribution (paid). Basic CloudFront metrics (Requests, 4xx/5xx, BytesDownloaded) work without it. |
+| ECS `Task Count` (Running/Desired)                  | [Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-cluster.html) enabled on the cluster — these metrics are in the `ECS/ContainerInsights` namespace. CPU/Memory work without it. |
+
 ## Requirements
 
 | Name      | Version |
@@ -79,7 +88,8 @@ module "load_test_dashboard" {
 
 ## Outputs
 
-| Name           | Description               |
-| -------------- | ------------------------- |
-| dashboard_arn  | CloudWatch dashboard ARN  |
-| dashboard_name | CloudWatch dashboard name |
+| Name           | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| dashboard_arn  | CloudWatch dashboard ARN                                   |
+| dashboard_name | CloudWatch dashboard name                                  |
+| dashboard_url  | URL to open the dashboard in the CloudWatch console        |
