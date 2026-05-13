@@ -12,7 +12,7 @@ variable "region" {
 
 # CloudFront (optional)
 variable "cloudfront_distribution_id" {
-  description = "CloudFront distribution ID. Leave empty to omit the CloudFront section."
+  description = "CloudFront distribution ID. Leave empty to omit the CloudFront section. NOTE: the Cache Hit Rate and Origin Latency widgets require \"Additional CloudWatch metrics\" enabled on the distribution; without it those widgets render as \"No data\"."
   type        = string
   default     = ""
 }
@@ -44,13 +44,20 @@ variable "alb_label" {
 
 # ECS (optional)
 variable "ecs_services" {
-  description = "List of ECS services to monitor. Leave empty to omit the ECS section."
+  description = "List of ECS services to monitor. Leave empty to omit the ECS section. NOTE: the Task Count widget requires Container Insights enabled on the cluster — without it RunningTaskCount/DesiredTaskCount render as \"No data\"."
   type = list(object({
     cluster_name = string
     service_name = string
     label        = optional(string, "")
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for s in var.ecs_services : s.cluster_name != "" && s.service_name != ""
+    ])
+    error_message = "Each ecs_services entry must have a non-empty cluster_name and service_name."
+  }
 }
 
 # RDS (optional)
@@ -67,7 +74,12 @@ variable "rds_label" {
 }
 
 variable "period" {
-  description = "Metric aggregation period in seconds"
+  description = "Metric aggregation period in seconds. Valid values: 1, 5, 10, 30 (high-resolution) or any multiple of 60 up to 86400."
   type        = number
   default     = 60
+
+  validation {
+    condition     = contains([1, 5, 10, 30], var.period) || (var.period >= 60 && var.period <= 86400 && var.period % 60 == 0)
+    error_message = "period must be one of 1, 5, 10, 30, or a multiple of 60 up to 86400."
+  }
 }
