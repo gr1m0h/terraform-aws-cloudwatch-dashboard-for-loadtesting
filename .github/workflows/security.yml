@@ -2,23 +2,25 @@
 name: security
 on:
   pull_request:
-  workflow_dispatch:
 permissions:
   contents: read
 
 jobs:
   osv-scan:
-    uses: gr1m0h/.github/.github/workflows/osv-scanner.yml@dcf77fa04b0292652605c3d83fa16fcbe2d83f23
+    uses: gr1m0h/.github/.github/workflows/osv-scanner.yml@bfc0348f95a376b47e216b5136240e24d97dda8a
     permissions:
       contents: read
       security-events: write
   gitleaks:
-    uses: gr1m0h/.github/.github/workflows/gitleaks.yml@dcf77fa04b0292652605c3d83fa16fcbe2d83f23
-  dependency-review:
-    if: github.event_name == 'pull_request'
-    uses: gr1m0h/.github/.github/workflows/dependency-review.yml@dcf77fa04b0292652605c3d83fa16fcbe2d83f23
+    uses: gr1m0h/.github/.github/workflows/gitleaks.yml@bfc0348f95a376b47e216b5136240e24d97dda8a
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: read
+  dependency-review:
+    if: github.event_name == 'pull_request' && github.event.repository.private == false
+    uses: gr1m0h/.github/.github/workflows/dependency-review.yml@bfc0348f95a376b47e216b5136240e24d97dda8a
+    permissions:
+      contents: read
+      pull-requests: read
   actionlint:
-    uses: gr1m0h/.github/.github/workflows/actions-pin-lint.yml@dcf77fa04b0292652605c3d83fa16fcbe2d83f23
+    uses: gr1m0h/.github/.github/workflows/actions-pin-lint.yml@bfc0348f95a376b47e216b5136240e24d97dda8a
